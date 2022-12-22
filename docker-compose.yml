@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  web:
+    tty: true
+    build: .
+    image: yashpalsparton/firstimg:firstpush
+    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:5000"
+    ports:
+     - "5000:5000"
+

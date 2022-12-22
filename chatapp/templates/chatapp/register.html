@@ -1,0 +1,82 @@
+{% extends "chatapp/base.html" %}
+{% block content %}
+
+    <div class="container" >
+        <div class="row">
+            <div class="col-md-12 min-vh-100 d-flex flex-column justify-content-center">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mx-auto">
+    
+                        <!-- form card login -->
+                        <div class="card rounded shadow shadow-sm" style="background-color: #145583;z-index: 1;">
+                            <div class="card-header">
+                                <h3 class="mb-0 text-white">Register</h3>
+                            </div>
+                            <div class="card-body">
+                                <form class="form" role="form" autocomplete="off" action = "{% url 'chatapp:register' %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        
+                                        <input type="text" class="form-control form-control-sm rounded-1" name="username"  placeholder="Username">
+                                        
+                                    </div>
+                                    <div class="form-group mt-2">
+                                        
+                                        <input type="text" class="form-control form-control-sm rounded-1"  name="email"  placeholder="Email" >
+                                       
+                                    </div>
+                                    <div class="form-group mt-2">
+                                        
+                                        <input type="password" class="form-control form-control-sm rounded-1"  name="password1"  placeholder="Password" >
+                                       
+                                    </div>
+                                    <div class="form-group mt-2">
+                                        
+                                        <input type="password" class="form-control form-control-sm rounded-1"  name="password2"  placeholder="Re-Enter Password" >
+                                       
+                                    </div>
+                                    <div class="row">
+                                        <div class=" col-2" style="margin-left: 35%;">
+                                            <button type="submit" class="btn btn-success btn-sm float-center mt-2 text-center" style="width: 70px;color:rgb(14, 242, 14)">Register</button>
+                                        </div>
+                                        <div class="col-3 offset-2 p-2">
+                                            <a href="{% url 'chatapp:login' %}" style="width: 50px;color:rgb(14, 242, 14);margin-left:40%;text-decoration:none;" class="text-right">Login</a>
+                                        </div>
+                                    </div>
+                                    </form>
+                            </div>
+                            
+                            
+                            <!--/card-block-->
+                        </div>
+                        <!-- /form card login -->
+    
+                    </div>
+    
+    
+                </div>
+                <!--/row-->
+    
+            </div>
+            <!--/col-->
+        </div>
+        <!--/row-->
+    </div>
+    <!--/container-->
+
+<script>
+    $("#btnLogin").click(function(event) {
+
+        //Fetch form to apply custom Bootstrap validation
+        var form = $("#formLogin")
+    
+        if (form[0].checkValidity() === false) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        
+        form.addClass('was-validated');
+      });
+    
+</script>
+{% endblock %}
