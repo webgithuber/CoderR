@@ -17,12 +17,15 @@ class MySyncConsumer(SyncConsumer):
         
         roomname=self.scope['url_route']['kwargs']['roomname']
         username=self.scope['url_route']['kwargs']['username']
+        print("connected user....",username ,roomname)
+        print("channel name ...",self.channel_name)
         if roomname not in users:
             users[roomname]=[ ]
             channels[roomname]=[ ]
             
             
         users[roomname]+=[username]
+        print("user in this room... " ,users[roomname])
         if len(channels[roomname])>0:
             print('channels_name' ,channels[roomname][0])
             async_to_sync(self.channel_layer.send)(
@@ -45,6 +48,7 @@ class MySyncConsumer(SyncConsumer):
         roomname=self.scope['url_route']['kwargs']['roomname']
         username=self.scope['url_route']['kwargs']['username']
         #print('messege is ',event['text'])
+        print("user sending message...",username,roomname)
         obj=(json.loads(event['text']))
         if 'new_join' in obj:
             async_to_sync(self.channel_layer.send)(
