@@ -5,7 +5,7 @@ services:
     tty: true
     build: .
     image: firstimg:firstpush
-    command: sh -c "python manage.py makemigrations && python manage.py migrate && gunicorn --bind 0.0.0.0:5000 chat.asgi -w 4 -k uvicorn.workers.UvicornWorker"
+    #command: sh -c "python manage.py makemigrations && python manage.py migrate && gunicorn --bind 0.0.0.0:5000 chat.asgi -w 4 -k uvicorn.workers.UvicornWorker"
     ports:
      - "5000:5000"
 
