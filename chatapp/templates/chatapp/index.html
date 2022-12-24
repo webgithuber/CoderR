@@ -13,15 +13,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/javascript/javascript.min.js">
-
-    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/clike/clike.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/javascript/javascript.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/python/python.min.js"></script>
+    
+    
     <title>Document</title>
 </head>
 <body style="background-color: #0F3E5F;">
     {{room_code|json_script:"room-name"}}
     {{username|json_script:"user-name"}}
-    
+    {{request.user.username|json_script:"id"}}
+    {{lang|json_script:"lang"}}
     <div class="container-fluid">
         <div class="row">
             <div class="col-10 p-0" id="editor" style="height: 100vh;">
@@ -42,20 +45,31 @@
     </div>
    
     <script>
+        var lang=JSON.parse(document.getElementById('lang').textContent);
+        console.log(lang);
+        var editor_type;
+        if(lang=='C++'){lang='text/x-c++src';editor_type='//It is C++ Editor.'}
+        else if(lang=='Python'){lang="text/x-python";editor_type='#It is Python Editor.'}
+        else if(lang=='Java'){lang='text/x-java';editor_type='//It is Java Editor.'}
+        else {lang='javascript';editor_type='//It is Javascript Editor.'}
+
         var editor=CodeMirror(document.querySelector('#editor'), {
             lineNumbers: true,
             tabSize: 2,
-            value: 'console.log("Hello, World");',
-            mode: 'javascript',
+            value: editor_type,
+            mode: lang,
             matchBrackets: true,
+            autoCloseBrackets:true,
             theme: 'monokai',
            
           });
           editor.setSize("100%", "100%");
-        
+        console.log(typeof(document.getElementById('id').textContent));
         const roomName=JSON.parse(document.getElementById('room-name').textContent)
         const userName=JSON.parse(document.getElementById('user-name').textContent)
-
+        const id=JSON.parse(document.getElementById('id').textContent)
+        
+        
         function copyID() {
             navigator.clipboard.writeText(roomName);
             alert("Room ID copied to clipboard.")
@@ -69,7 +83,7 @@
         
        
 
-        var ws=new WebSocket("ws://65.0.29.14:5000/ws/sc/"+ roomName + "/" + userName + "/");
+        var ws=new WebSocket("ws://127.0.0.1:8000/ws/sc/"+ roomName + "/" + userName + "/" + id + "/");
         ws.onopen=function(event){
             console.log('connection opened.....');
             //ws.send("message from client");
@@ -84,9 +98,15 @@
                     list.innerHTML="";
                     data.list.forEach((item)=>{
                     let li = document.createElement("li");
-                    li.innerText = item;
+                    
+                    li.innerText = item[1];
                     li.classList.add("list-group-item");
-                    list.appendChild(li);
+                    if(item[0]==id && userName==item[1]){li.style.backgroundColor="orange";
+                    
+                    list.prepend(li);
+                    }
+                    else 
+                    {list.appendChild(li);}
                     })
                     
               }

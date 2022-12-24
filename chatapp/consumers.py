@@ -17,14 +17,18 @@ class MySyncConsumer(SyncConsumer):
         
         roomname=self.scope['url_route']['kwargs']['roomname']
         username=self.scope['url_route']['kwargs']['username']
+        id=self.scope['url_route']['kwargs']['id']
+        ls=[]
+        ls+=[id]
+        ls+=[username]
         print("connected user....",username ,roomname)
         print("channel name ...",self.channel_name)
+        print("list..", ls)
         if roomname not in users:
             users[roomname]=[ ]
             channels[roomname]=[ ]
             
-            
-        users[roomname]+=[username]
+        users[roomname]+=[ls]
         print("user in this room... " ,users[roomname])
         if len(channels[roomname])>0:
             print('channels_name' ,channels[roomname][0])
@@ -75,7 +79,12 @@ class MySyncConsumer(SyncConsumer):
         print('websocket disconnceted...')
         roomname=self.scope['url_route']['kwargs']['roomname']
         username=self.scope['url_route']['kwargs']['username']
-        users[roomname].remove(username)
+        id=self.scope['url_route']['kwargs']['id']
+
+        ls=[]
+        ls+=[id]
+        ls+=[username]
+        users[roomname].remove(ls)
         async_to_sync(self.channel_layer.group_discard)(roomname,self.channel_name)
 
         async_to_sync(self.channel_layer.group_send)(roomname,{
