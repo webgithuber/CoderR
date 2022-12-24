@@ -5,13 +5,15 @@
         <div class="row">
             <div class="col-md-12 min-vh-100 d-flex flex-column justify-content-center">
                 <div class="row">
-                    <div class="col-lg-4 col-md-6 mx-auto">
+                    <div class="col-9 col-lg-3 mx-auto">
     
                         <!-- form card login -->
                         <div class="card rounded shadow shadow-sm" style="background-color: #145583;z-index: 1;">
-                            <div class="card-header">
-                                <h3 class="mb-0 text-white" style="width: 30%;display: inline-block;">CodeR</h3>
-                                <span style="margin-left: 30%;color:white">{{request.user.username}} <a href="{% url 'chatapp:logout' %}" style="text-decoration: none;color:#0F0F0E;display: inline-block;">Logout</a> </span>
+                            <div class="card-header row">
+                                <h3 class="mb-0 mx-0 text-white p-0" style="width: 30%;display: inline-block;margin:0">CodeR</h3>
+                                <div class="col-8  d-flex justify-content-end text-right p-0" style="margin-right:1%">  
+                                    <span style="color:white" class="mx-0">yashpal <a href="/logout/" style="text-decoration: none;color:#0F0F0E;display: inline-block;">Logout</a> </span>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <form class="form" role="form" autocomplete="off" action = "{% url 'chatapp:join' %}" method="POST">
