@@ -27,19 +27,28 @@
     {{lang|json_script:"lang"}}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-10 p-0" id="editor" style="height: 100vh;">
+            <div class="col-12 p-0 col-md-10" id="editor" style="height: 100vh;">
                
             </div>
-            <div class="col-2 text-center position-relative">
+            <div class="text-center d-none d-md-block position-relative col-md-2">
                 <span  style="color: #28DD04;">Connected</span>
-                <ul id="userList" class="list-group"></ul>
-
+                <ul id="userList" class="list-group" ></ul>
                 <div style="top:100%;right:100%;" class="sticky-top sticky-bottom">
                 <button onclick="copyID()" class=" btn btn-success " style="width:90px;margin-bottom:4%">Copy ID</button>
                 <button onclick="leave()" class=" btn btn-danger  " style="width:85px;margin-left:5%;margin-bottom:4%;"><a href="{% url 'chatapp:home' %}" style="text-decoration: none;" class="text-white"> Close</a></button>
 
-                </div>
-                
+                </div> 
+            </div>
+            <div class="text-center position-relative  d-md-none dropdown">
+                <button style="color: #28DD04;" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Connected User
+                  </button>
+                <ul id="userList2" class=" dropdown-menu" aria-labelledby="dropdownMenuButton1"></ul>
+                <div class="mt-2">
+                <button onclick="copyID()" class=" btn btn-success " style="width:90px;margin-bottom:4%">Copy ID</button>
+                <button onclick="leave()" class=" btn btn-danger  " style="width:85px;margin-left:5%;margin-bottom:4%;"><a href="{% url 'chatapp:home' %}" style="text-decoration: none;" class="text-white"> Close</a></button>
+
+                </div> 
             </div>
         </div>
     </div>
@@ -95,18 +104,27 @@
             console.log(data);
             if("list" in data) {
                     var list = document.getElementById("userList");
+                    var list2 = document.getElementById("userList2");
                     list.innerHTML="";
+                    list2.innerHTML="";
                     data.list.forEach((item)=>{
                     let li = document.createElement("li");
-                    
+                    let li2 = document.createElement("li");
                     li.innerText = item[1];
+                    li2.innerText = item[1];
                     li.classList.add("list-group-item");
-                    if(item[0]==id && userName==item[1]){li.style.backgroundColor="orange";
                     
+                    li2.classList.add("dropdown-item");
+                    if(item[0]==id && userName==item[1]){
+                    li.style.backgroundColor="orange";
+                    li2.style.backgroundColor="orange";
                     list.prepend(li);
+                    list2.prepend(li2);
                     }
                     else 
-                    {list.appendChild(li);}
+                    {list.appendChild(li);
+                     list2.appendChild(li2);
+                    }
                     })
                     
               }
