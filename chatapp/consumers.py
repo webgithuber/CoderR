@@ -86,13 +86,7 @@ class MySyncConsumer(SyncConsumer):
         ls+=[username]
         print("user in room....",users[roomname])
         print("removing..",ls)
-        channels[roomname].remove(self.channel_name)
-        users[roomname].remove(ls)
-        print("user in room....",users[roomname])
-        if len(users[roomname])==0:
-            del users[roomname]
-        if len(channels[roomname])==0:
-            del channels[roomname]
+        
         async_to_sync(self.channel_layer.group_discard)(roomname,self.channel_name)
 
         async_to_sync(self.channel_layer.group_send)(roomname,{
@@ -100,6 +94,13 @@ class MySyncConsumer(SyncConsumer):
             'list':json.dumps({"list":users[roomname]}),
             
         })
+        channels[roomname].remove(self.channel_name)
+        users[roomname].remove(ls)
+        print("user in room....",users[roomname])
+        if len(users[roomname])==0:
+            del users[roomname]
+        if len(channels[roomname])==0:
+            del channels[roomname]
         raise StopConsumer()
     
     def chat_message(self,event):
