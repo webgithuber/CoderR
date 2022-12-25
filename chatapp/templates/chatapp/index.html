@@ -155,7 +155,7 @@
         
         document.addEventListener('keyup', (event) => {
             var z=editor.getValue();
-            console.log(z);
+            console.log("it's key up");
             ws.send(JSON.stringify({'msg':z}));
             
 

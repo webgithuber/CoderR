@@ -1,5 +1,6 @@
 from channels.consumer import SyncConsumer , AsyncConsumer
 from asgiref.sync import async_to_sync
+from channels.exceptions import StopConsumer
 import time
 import json
 
@@ -64,7 +65,6 @@ class MySyncConsumer(SyncConsumer):
             )
         elif 'close' in obj:
             print('close')
-            self.websocket_disconnect(event)
         else:
             pass
             async_to_sync(self.channel_layer.group_send)(roomname,{
@@ -84,7 +84,10 @@ class MySyncConsumer(SyncConsumer):
         ls=[]
         ls+=[id]
         ls+=[username]
+        print("user in room....",users[roomname])
+        print("removing..",ls)
         users[roomname].remove(ls)
+        print("user in room....",users[roomname])
         async_to_sync(self.channel_layer.group_discard)(roomname,self.channel_name)
 
         async_to_sync(self.channel_layer.group_send)(roomname,{
@@ -92,6 +95,7 @@ class MySyncConsumer(SyncConsumer):
             'list':json.dumps({"list":users[roomname]}),
             
         })
+        raise StopConsumer()
     
     def chat_message(self,event):
         print('event... ', event)
