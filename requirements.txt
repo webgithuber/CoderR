@@ -31,3 +31,4 @@ zope.interface==5.5.2
 gunicorn
 uvicorn
 websockets
+channels-redis

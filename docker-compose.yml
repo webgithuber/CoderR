@@ -1,11 +1,21 @@
 version: '3'
 
 services:
+  redis:
+    image: redis:5
+    ports:  
+     - "6378:6379"
   web:
     tty: true
     build: .
     image: firstimg:firstpush
-    #command: sh -c "python manage.py makemigrations && python manage.py migrate && gunicorn --bind 0.0.0.0:5000 chat.asgi -w 4 -k uvicorn.workers.UvicornWorker"
+    environment: 
+     - REDIS_HOST=redis
+    #command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
     ports:
      - "5000:5000"
+    links:
+     - redis
 
+
+#gunicorn --bind 0.0.0.0:5000 chat.asgi -w 4 -k uvicorn.workers.UvicornWorker

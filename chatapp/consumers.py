@@ -30,6 +30,8 @@ class MySyncConsumer(SyncConsumer):
             channels[roomname]=[ ]
             
         users[roomname]+=[ls]
+        print("channels...",channels)
+        print("users...",users)
         print("user in this room... " ,users[roomname])
         if len(channels[roomname])>0:
             print('channels_name' ,channels[roomname][0])
