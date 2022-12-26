@@ -126,12 +126,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REDIS_HOST = os.environ.get('REDIS_HOST', '52.66.212.217')
+REDIS_HOST = os.environ.get('REDIS_HOST', '13.233.89.19')
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1:5000", 6379)],
+            "hosts": [("13.233.89.19", 6379)],
+            
         },
     }
 }
