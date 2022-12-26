@@ -11,8 +11,6 @@ services:
     depends_on: 
      - redis
     image: firstimg:firstpush
-    environment: 
-     - REDIS_HOST=redis
     #command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
     ports:
      - "5000:5000"
