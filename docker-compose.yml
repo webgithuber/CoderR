@@ -8,6 +8,8 @@ services:
   web:
     tty: true
     build: .
+    depends_on: 
+     - redis
     image: firstimg:firstpush
     environment: 
      - REDIS_HOST=redis
