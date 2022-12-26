@@ -92,7 +92,7 @@
         
        
 
-        var ws=new WebSocket("ws://52.66.212.217:5000/ws/sc/"+ roomName + "/" + userName + "/" + id + "/");
+        var ws=new WebSocket("ws://127.0.0.1:5000/ws/sc/"+ roomName + "/" + userName + "/" + id + "/");
         ws.onopen=function(event){
             console.log('connection opened.....');
             //ws.send("message from client");

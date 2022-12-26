@@ -6,7 +6,11 @@ import json
 
 users={}
 channels={}
-
+# import redis
+# con = redis.Redis('13.233.89.19:5000')
+# user = {"Name":"Pradeep", "Company":"SCTL", "Address":"Mumbai", "Location":"RCP"}
+# con.hmset("pythonDict", {"Location": "Ahmedabad"})
+# print(con.hgetall("pythonDict"))
 class MySyncConsumer(SyncConsumer):
     
     def websocket_connect(self,event):
@@ -15,7 +19,7 @@ class MySyncConsumer(SyncConsumer):
             'type':'websocket.accept',
 
         })
-        
+    
         roomname=self.scope['url_route']['kwargs']['roomname']
         username=self.scope['url_route']['kwargs']['username']
         id=self.scope['url_route']['kwargs']['id']
@@ -27,6 +31,7 @@ class MySyncConsumer(SyncConsumer):
         print("list..", ls)
         if roomname not in users:
             users[roomname]=[ ]
+        if roomname not in channels:
             channels[roomname]=[ ]
             
         users[roomname]+=[ls]
@@ -89,20 +94,27 @@ class MySyncConsumer(SyncConsumer):
         print("user in room....",users[roomname])
         print("removing..",ls)
         
-        async_to_sync(self.channel_layer.group_discard)(roomname,self.channel_name)
-
-        async_to_sync(self.channel_layer.group_send)(roomname,{
-            'type':'user.info',
-            'list':json.dumps({"list":users[roomname]}),
-            
-        })
         channels[roomname].remove(self.channel_name)
         users[roomname].remove(ls)
         print("user in room....",users[roomname])
+        
+
+        async_to_sync(self.channel_layer.group_discard)(roomname,self.channel_name)
+
+        
+        print("user len ....",len(users[roomname]))
+        print("channels len ....",len(channels[roomname]))
         if len(users[roomname])==0:
             del users[roomname]
+        else:
+            async_to_sync(self.channel_layer.group_send)(roomname,{
+            'type':'user.info',
+            'list':json.dumps({"list":users[roomname]}),   
+        })
+        
         if len(channels[roomname])==0:
             del channels[roomname]
+        
         raise StopConsumer()
     
     def chat_message(self,event):

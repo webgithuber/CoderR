@@ -9,3 +9,4 @@ ENV PYTHONUNBUFFERED=1
 COPY . .
 EXPOSE 5000
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "chat.asgi", "-w", "4", "-k", "uvicorn.workers.UvicornWorker"]
+#"gunicorn", "--bind", "0.0.0.0:5000", "chat.asgi", "-w", "4", "-k", "uvicorn.workers.UvicornWorker"
