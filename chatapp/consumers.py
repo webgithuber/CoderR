@@ -3,11 +3,10 @@ from asgiref.sync import async_to_sync
 from channels.exceptions import StopConsumer
 import os
 import django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "admin.settings")
-django.setup()
 from .models import Room, ActiveUser
 from django.contrib.auth.models import User
-
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "chat.settings")
+django.setup()
 import time
 import json
 
@@ -38,7 +37,7 @@ class MySyncConsumer(SyncConsumer):
         roomname=self.scope['url_route']['kwargs']['roomname']
         username=self.scope['url_route']['kwargs']['username']
         id=self.scope['url_route']['kwargs']['id']
-
+        print("this user....",roomname,username)
         async_to_sync(self.channel_layer.group_add)(roomname,self.channel_name)
         async_to_sync(self.channel_layer.group_send)(roomname,{
             'type':'user.joined',

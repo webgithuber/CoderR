@@ -54,7 +54,7 @@
     </div>
    
     <script>
-        const user_joined=[];
+        var user_joined=[];
         console.log(typeof(user_joined))
         var lang=JSON.parse(document.getElementById('lang').textContent);
         console.log(lang);
@@ -153,7 +153,7 @@
               }
               else if("removed" in data)
               {
-                const array=[];
+                var array=[];
                 for (let i = 0, len = user_joined.length; i < len; i++) {
                     
                     if(user_joined[i][0]==data.removed[0])
@@ -164,7 +164,7 @@
                     }
                     }
                 
-
+                user_joined=array;
                 uodateUserList(array);
               }
               else if("new_join" in data)
