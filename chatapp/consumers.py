@@ -1,6 +1,10 @@
 from channels.consumer import SyncConsumer , AsyncConsumer
 from asgiref.sync import async_to_sync
 from channels.exceptions import StopConsumer
+import os
+import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "admin.settings")
+django.setup()
 from .models import Room, ActiveUser
 from django.contrib.auth.models import User
 
