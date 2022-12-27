@@ -3,7 +3,6 @@ version: '3'
 services:
   redis:
     image: redis:5
-    command: ["redis-server", "--bind", "redis", "--port", "6379"]
     restart: 'always'
     ports:  
      - "6379:6379"
@@ -11,8 +10,6 @@ services:
   web:
     tty: true
     build: .
-    depends_on: 
-     - redis
     image: firstimg:firstpush
     #command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
     ports:
@@ -22,3 +19,5 @@ services:
 
 
 #gunicorn --bind 0.0.0.0:5000 chat.asgi -w 4 -k uvicorn.workers.UvicornWorker
+# depends_on: 
+#      - redis

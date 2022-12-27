@@ -1,12 +1,12 @@
 from channels.consumer import SyncConsumer , AsyncConsumer
 from asgiref.sync import async_to_sync
 from channels.exceptions import StopConsumer
-import redis
+from .models import Room, ActiveUser
+from django.contrib.auth.models import User
+
 import time
 import json
 
-users={}
-channels={}
 
 
  
@@ -30,41 +30,47 @@ class MySyncConsumer(SyncConsumer):
             'type':'websocket.accept',
 
         })
-    
+        
         roomname=self.scope['url_route']['kwargs']['roomname']
         username=self.scope['url_route']['kwargs']['username']
         id=self.scope['url_route']['kwargs']['id']
-        ls=[]
-        ls+=[id]
-        ls+=[username]
-        print("connected user....",username ,roomname)
-        print("channel name ...",self.channel_name)
-        print("list..", ls)
-        if roomname not in users:
-            users[roomname]=[ ]
-        if roomname not in channels:
-            channels[roomname]=[ ]
+
+        async_to_sync(self.channel_layer.group_add)(roomname,self.channel_name)
+        async_to_sync(self.channel_layer.group_send)(roomname,{
+            'type':'user.joined',
+            'channel_name':self.channel_name,
+            'added':json.dumps({"added":[id,username,"nothing"]}),
             
-        users[roomname]+=[ls]
-        print("channels...",channels)
-        print("users...",users)
-        print("user in this room... " ,users[roomname])
-        if len(channels[roomname])>0:
-            print('channels_name' ,channels[roomname][0])
+        })
+
+        room=Room.objects.get(room_code=roomname)
+        
+        user_list=room.activeuser_set.all()
+        list=[]
+        print(user_list)
+        for user in user_list:
+            list.append([user.user.username,user.username,user.channelname])
+        
+        if len(list)>0:
             async_to_sync(self.channel_layer.send)(
-            channels[roomname][0],
+            list[0][2],
             {
                 'type':'new.join',
                 'new_join':json.dumps({"new_join":self.channel_name}),
-            }
-        )
-        channels[roomname]+=[self.channel_name]
-        async_to_sync(self.channel_layer.group_add)(roomname,self.channel_name)
-        async_to_sync(self.channel_layer.group_send)(roomname,{
-            'type':'user.info',
-            'list':json.dumps({"list":users[roomname]}),
-            
-        })
+            })
+
+        ActiveUser(room_code=room,
+        user=User.objects.get(username=id),username=username,
+        channelname=self.channel_name).save()
+
+        list.append([id,username,"nothing"])
+        print("recent list....",list)
+        async_to_sync(self.channel_layer.send)(self.channel_name,
+            {
+                'type':'recent.list',
+                'list':json.dumps({"list":list}),
+            })
+        
 
     def websocket_receive(self,event):
         print('websocket receive...' ,event)
@@ -98,34 +104,21 @@ class MySyncConsumer(SyncConsumer):
         roomname=self.scope['url_route']['kwargs']['roomname']
         username=self.scope['url_route']['kwargs']['username']
         id=self.scope['url_route']['kwargs']['id']
+        room=Room.objects.get(room_code=roomname)
+        print("deleting ...",id,username)
 
-        ls=[]
-        ls+=[id]
-        ls+=[username]
-        print("user in room....",users[roomname])
-        print("removing..",ls)
-        
-        channels[roomname].remove(self.channel_name)
-        users[roomname].remove(ls)
-        print("user in room....",users[roomname])
-        
+        ActiveUser.objects.filter(room_code=room,
+        channelname=self.channel_name).delete()
 
+        
         async_to_sync(self.channel_layer.group_discard)(roomname,self.channel_name)
-
-        
-        print("user len ....",len(users[roomname]))
-        print("channels len ....",len(channels[roomname]))
-        if len(users[roomname])==0:
-            del users[roomname]
-        else:
-            async_to_sync(self.channel_layer.group_send)(roomname,{
-            'type':'user.info',
-            'list':json.dumps({"list":users[roomname]}),   
+        async_to_sync(self.channel_layer.group_send)(roomname,{
+            'type':'user.removed',
+            'removed':json.dumps({"removed":[id,username,"nothing"]}),
+            
         })
         
-        if len(channels[roomname])==0:
-            del channels[roomname]
-        
+
         raise StopConsumer()
     
     def chat_message(self,event):
@@ -140,6 +133,17 @@ class MySyncConsumer(SyncConsumer):
                 'type':'websocket.send',
                 'text':event['list']
             })
+    def user_joined(self,event):
+        if self.channel_name!=event['channel_name']:
+            self.send({
+                    'type':'websocket.send',
+                    'text':event['added']
+                })
+    def user_removed(self,event):
+        self.send({
+                'type':'websocket.send',
+                'text':event['removed']
+            })
     def new_join(self,event):
         self.send({
                 'type':'websocket.send',
@@ -149,6 +153,11 @@ class MySyncConsumer(SyncConsumer):
         self.send({
                 'type':'websocket.send',
                 'text':event['msg']
+            })
+    def recent_list(self,event):
+        self.send({
+                'type':'websocket.send',
+                'text':event['list']
             })
 
 

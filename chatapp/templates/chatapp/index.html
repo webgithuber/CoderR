@@ -18,7 +18,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/python/python.min.js"></script>
     
     
-    <title>Document</title>
+    <title>CoderR</title>
 </head>
 <body style="background-color: #0F3E5F;">
     {{room_code|json_script:"room-name"}}
@@ -54,6 +54,8 @@
     </div>
    
     <script>
+        const user_joined=[];
+        console.log(typeof(user_joined))
         var lang=JSON.parse(document.getElementById('lang').textContent);
         console.log(lang);
         var editor_type;
@@ -89,33 +91,23 @@
             console.log("close");
             ws.send(JSON.stringify({'close':1}));
         }
-        
-       
-
-        var ws=new WebSocket("ws://3.109.62.128:5000/ws/sc/"+ roomName + "/" + userName + "/" + id + "/");
-        ws.onopen=function(event){
-            console.log('connection opened.....');
-            //ws.send("message from client");
-            console.log((event));
-        }
-        ws.onmessage =function(event){
-            console.log('message received from server.....',event);
-            const data=JSON.parse(event.data);
-            console.log(data);
-            if("list" in data) {
-                    var list = document.getElementById("userList");
+        function uodateUserList(user_joined)
+        {
+            var list = document.getElementById("userList");
                     var list2 = document.getElementById("userList2");
                     list.innerHTML="";
                     list2.innerHTML="";
-                    data.list.forEach((item)=>{
+                    
+                    for (let i = 0, len = user_joined.length; i < len; i++) {
+                        
                     let li = document.createElement("li");
                     let li2 = document.createElement("li");
-                    li.innerText = item[1];
-                    li2.innerText = item[1];
+                    li.innerText = user_joined[i][1];
+                    li2.innerText = user_joined[i][1];
                     li.classList.add("list-group-item");
-                    
+                   
                     li2.classList.add("dropdown-item");
-                    if(item[0]==id && userName==item[1]){
+                    if(user_joined[i][0]==id && userName==user_joined[i][1]){
                     li.style.backgroundColor="orange";
                     li2.style.backgroundColor="orange";
                     list.prepend(li);
@@ -125,8 +117,55 @@
                     {list.appendChild(li);
                      list2.appendChild(li2);
                     }
-                    })
+                    }
+
+                  
+        }
+        
+       
+
+        var ws=new WebSocket("ws://3.109.62.128:5000/ws/sc/"+ roomName + "/" + userName + "/" + id + "/");
+        ws.onopen=function(event){
+            console.log('connection opened.....');
+            //ws.send("message from client");
+            console.log((event));
+        }
+        
+        ws.onmessage =function(event){
+            console.log('message received from server.....',event);
+            const data=JSON.parse(event.data);
+            console.log(data);
+            if("list" in data){
+                for (let i = 0, len = data.list.length; i < len; i++) {
+                    user_joined.push((data.list[i]));
+                    }
+                
+                
+                console.log("user_list....",typeof(data.list.length));  
+                console.log("user_joined....",user_joined);
+                uodateUserList(user_joined);
+            }
+            else if("added" in data)
+              {
+                user_joined.push(data.added)
+                  console.log("added ....",user_joined);
+                uodateUserList(user_joined);
+              }
+              else if("removed" in data)
+              {
+                const array=[];
+                for (let i = 0, len = user_joined.length; i < len; i++) {
                     
+                    if(user_joined[i][0]==data.removed[0])
+                    {}
+                    else
+                    {
+                     array.push(user_joined[i]);
+                    }
+                    }
+                
+
+                uodateUserList(array);
               }
               else if("new_join" in data)
               {
