@@ -7,24 +7,19 @@ import json
 
 users={}
 channels={}
-# import redis
-# con = redis.Redis('13.233.89.19:5000')
-# user = {"Name":"Pradeep", "Company":"SCTL", "Address":"Mumbai", "Location":"RCP"}
-# con.hmset("pythonDict", {"Location": "Ahmedabad"})
-# print(con.hgetall("pythonDict"))
 
 
  
 
 # Create a redis client
 
-redisClient = redis.StrictRedis(host='13.233.89.19',port=6379,db=0)
+#redisClient = redis.StrictRedis(host='13.233.89.19',port=6379,db=0)
 
 # Add values to the Redis list through the HEAD position of the list
-redisClient.lpush('LanguageList', "Kotlin")
-redisClient.lpush('LanguageList', "Python")
-print(redisClient.lindex('LanguageList', 0))
-print(redisClient.lindex('LanguageList', 1))
+# redisClient.lpush('LanguageList', "Kotlin")
+# redisClient.lpush('LanguageList', "Python")
+# print(redisClient.lindex('LanguageList', 0))
+# print(redisClient.lindex('LanguageList', 1))
 
 
 class MySyncConsumer(SyncConsumer):
