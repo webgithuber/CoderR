@@ -3,10 +3,11 @@ from asgiref.sync import async_to_sync
 from channels.exceptions import StopConsumer
 import os
 import django
-from .models import Room, ActiveUser
-from django.contrib.auth.models import User
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "chat.settings")
 django.setup()
+from .models import Room, ActiveUser
+from django.contrib.auth.models import User
+
 import time
 import json
 
